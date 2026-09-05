@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Tickets — OpsDesk{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Tickets</h2>
+    <a href="{{ url_for('routes.ticket_new') }}" class="btn btn-primary">+ Nouveau ticket</a>
+</div>
+
+<form method="get" class="card card-body mb-4">
+    <div class="row g-2">
+        <div class="col-md-3">
+            <input type="text" class="form-control" name="title" placeholder="Rechercher par titre"
+                   value="{{ filters.title }}">
+        </div>
+        <div class="col-md-2">
+            <select class="form-select" name="status">
+                <option value="">Statut (tous)</option>
+                {% for s in statuses %}
+                <option value="{{ s }}" {% if filters.status == s %}selected{% endif %}>{{ s }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select class="form-select" name="priority">
+                <option value="">Priorité (toutes)</option>
+                {% for p in priorities %}
+                <option value="{{ p }}" {% if filters.priority == p %}selected{% endif %}>{{ p }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select class="form-select" name="category">
+                <option value="">Catégorie (toutes)</option>
+                {% for c in categories %}
+                <option value="{{ c }}" {% if filters.category == c %}selected{% endif %}>{{ c }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <input type="text" class="form-control" name="technician" placeholder="Technicien"
+                   value="{{ filters.technician }}">
+        </div>
+        <div class="col-md-1">
+            <button type="submit" class="btn btn-outline-primary w-100">Filtrer</button>
+        </div>
+    </div>
+</form>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Titre</th>
+                    <th>Demandeur</th>
+                    <th>Technicien</th>
+                    <th>Statut</th>
+                    <th>Priorité</th>
+                    <th>Catégorie</th>
+                    <th>Créé le</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in tickets %}
+                <tr onclick="window.location='{{ url_for('routes.ticket_detail', ticket_id=t.id) }}'" style="cursor:pointer">
+                    <td>#{{ t.id }}</td>
+                    <td>{{ t.title }}</td>
+                    <td>{{ t.requester.username if t.requester else '—' }}</td>
+                    <td>{{ t.assignee.username if t.assignee else '—' }}</td>
+                    <td><span class="badge status-{{ t.status | replace(' ', '-') | lower }}">{{ t.status }}</span></td>
+                    <td><span class="badge priority-{{ t.priority | lower }}">{{ t.priority }}</span></td>
+                    <td>{{ t.category }}</td>
+                    <td>{{ t.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="8" class="text-center text-muted py-3">Aucun ticket ne correspond à ces critères.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

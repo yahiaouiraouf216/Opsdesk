@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}{% if ticket %}Modifier{% else %}Nouveau ticket{% endif %} — OpsDesk{% endblock %}
+{% block content %}
+<h2 class="mb-4">{% if ticket %}Modifier le ticket #{{ ticket.id }}{% else %}Nouveau ticket{% endif %}</h2>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post">
+            <div class="mb-3">
+                <label class="form-label" for="title">Titre</label>
+                <input class="form-control" type="text" id="title" name="title" required
+                       value="{{ ticket.title if ticket else '' }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="description">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="4">{{ ticket.description if ticket else '' }}</textarea>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" for="category">Catégorie</label>
+                    <select class="form-select" id="category" name="category">
+                        {% for c in categories %}
+                        <option value="{{ c }}" {% if ticket and ticket.category == c %}selected{% endif %}>{{ c }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label" for="priority">Priorité</label>
+                    <select class="form-select" id="priority" name="priority">
+                        {% for p in priorities %}
+                        <option value="{{ p }}" {% if ticket and ticket.priority == p %}selected{% endif %}>{{ p }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">{% if ticket %}Enregistrer{% else %}Créer le ticket{% endif %}</button>
+            <a href="{{ url_for('routes.ticket_list') }}" class="btn btn-outline-secondary">Annuler</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

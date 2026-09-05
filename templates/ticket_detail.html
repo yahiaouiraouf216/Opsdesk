@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}Ticket #{{ ticket.id }} — OpsDesk{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-start mb-3">
+    <div>
+        <h2>#{{ ticket.id }} — {{ ticket.title }}</h2>
+        <span class="badge status-{{ ticket.status | replace(' ', '-') | lower }}">{{ ticket.status }}</span>
+        <span class="badge priority-{{ ticket.priority | lower }}">{{ ticket.priority }}</span>
+        <span class="badge bg-secondary">{{ ticket.category }}</span>
+    </div>
+    <div>
+        <a href="{{ url_for('routes.ticket_edit', ticket_id=ticket.id) }}" class="btn btn-outline-secondary btn-sm">Modifier</a>
+        <form method="post" action="{{ url_for('routes.ticket_delete', ticket_id=ticket.id) }}" class="d-inline"
+              onsubmit="return confirm('Supprimer ce ticket définitivement ?');">
+            <button type="submit" class="btn btn-outline-danger btn-sm">Supprimer</button>
+        </form>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-8">
+        <div class="card mb-3">
+            <div class="card-header">Description</div>
+            <div class="card-body">
+                <p class="mb-0">{{ ticket.description or "Aucune description fournie." }}</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">Commentaires ({{ ticket.comments | length }})</div>
+            <ul class="list-group list-group-flush">
+                {% for c in ticket.comments %}
+                <li class="list-group-item">
+                    <div class="d-flex justify-content-between">
+                        <strong>{{ c.author.username if c.author else 'Inconnu' }}</strong>
+                        <small class="text-muted">{{ c.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                    </div>
+                    <p class="mb-0">{{ c.content }}</p>
+                </li>
+                {% else %}
+                <li class="list-group-item text-muted">Aucun commentaire pour l'instant.</li>
+                {% endfor %}
+            </ul>
+            <div class="card-body">
+                <form method="post" action="{{ url_for('routes.add_comment', ticket_id=ticket.id) }}">
+                    <div class="mb-2">
+                        <textarea class="form-control" name="content" rows="2" placeholder="Ajouter un commentaire..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">Envoyer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header">Informations</div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>Demandeur :</strong> {{ ticket.requester.username if ticket.requester else '—' }}</li>
+                <li class="list-group-item"><strong>Technicien :</strong> {{ ticket.assignee.username if ticket.assignee else 'Non assigné' }}</li>
+                <li class="list-group-item"><strong>Créé le :</strong> {{ ticket.created_at.strftime('%Y-%m-%d %H:%M') }}</li>
+                <li class="list-group-item"><strong>Modifié le :</strong> {{ ticket.updated_at.strftime('%Y-%m-%d %H:%M') }}</li>
+            </ul>
+        </div>
+
+        {% if current_user.is_technician %}
+        <div class="card mb-3">
+            <div class="card-header">Actions technicien</div>
+            <div class="card-body">
+                <form method="post" action="{{ url_for('routes.ticket_change_status', ticket_id=ticket.id) }}" class="mb-3">
+                    <label class="form-label small">Statut</label>
+                    <div class="input-group">
+                        <select class="form-select" name="status">
+                            {% for s in statuses %}
+                            <option value="{{ s }}" {% if ticket.status == s %}selected{% endif %}>{{ s }}</option>
+                            {% endfor %}
+                        </select>
+                        <button class="btn btn-outline-primary" type="submit">OK</button>
+                    </div>
+                </form>
+
+                <form method="post" action="{{ url_for('routes.ticket_change_priority', ticket_id=ticket.id) }}" class="mb-3">
+                    <label class="form-label small">Priorité</label>
+                    <div class="input-group">
+                        <select class="form-select" name="priority">
+                            {% for p in priorities %}
+                            <option value="{{ p }}" {% if ticket.priority == p %}selected{% endif %}>{{ p }}</option>
+                            {% endfor %}
+                        </select>
+                        <button class="btn btn-outline-primary" type="submit">OK</button>
+                    </div>
+                </form>
+
+                <form method="post" action="{{ url_for('routes.ticket_assign', ticket_id=ticket.id) }}">
+                    <label class="form-label small">Assigner à</label>
+                    <div class="input-group">
+                        <select class="form-select" name="technician_id">
+                            <option value="">Non assigné</option>
+                            {% for tech in technicians %}
+                            <option value="{{ tech.id }}" {% if ticket.assignee_id == tech.id %}selected{% endif %}>{{ tech.username }}</option>
+                            {% endfor %}
+                        </select>
+                        <button class="btn btn-outline-primary" type="submit">OK</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

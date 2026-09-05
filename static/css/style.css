@@ -1,0 +1,45 @@
+/* OpsDesk — styles complémentaires à Bootstrap */
+
+body {
+    background-color: #f4f6f9;
+}
+
+.opsdesk-navbar {
+    background-color: #1f2933;
+}
+
+.stat-card .stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.stat-card .stat-label {
+    color: #6b7280;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.col-md-2-4 {
+    flex: 0 0 auto;
+    width: 20%;
+}
+
+@media (max-width: 767px) {
+    .col-md-2-4 {
+        width: 50%;
+    }
+}
+
+/* Badges de statut */
+.status-open { background-color: #2563eb; color: #fff; }
+.status-in-progress { background-color: #d97706; color: #fff; }
+.status-waiting { background-color: #6b7280; color: #fff; }
+.status-resolved { background-color: #16a34a; color: #fff; }
+.status-closed { background-color: #374151; color: #fff; }
+
+/* Badges de priorité */
+.priority-low { background-color: #9ca3af; color: #fff; }
+.priority-medium { background-color: #0ea5e9; color: #fff; }
+.priority-high { background-color: #f97316; color: #fff; }
+.priority-critical { background-color: #dc2626; color: #fff; }
