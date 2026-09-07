@@ -1,0 +1,28 @@
+name: opsdesk
+services:
+  opsdesk:
+    depends_on:
+      db:
+        condition: service_healthy
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+      - DATABASE_URL=postgresql://opsdesk_user:opsdesk_password@db:5432/opsdesk_db
+
+  db:
+    image: postgres:15.4
+    environment:
+      POSTGRES_USER: opsdesk_user
+      POSTGRES_PASSWORD: opsdesk_password
+      POSTGRES_DB: opsdesk_db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U opsdesk_user -d opsdesk_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+volumes:
+  db_volume:
