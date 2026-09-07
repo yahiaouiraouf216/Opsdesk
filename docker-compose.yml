@@ -10,7 +10,7 @@ services:
     environment:
       - FLASK_ENV=development
       - DATABASE_URL=postgresql://opsdesk_user:opsdesk_password@db:5432/opsdesk_db
-
+      - TEST_DATABASE_URL=postgresql://opsdesk_user:opsdesk_password@db:5432/opsdesk_test
   db:
     image: postgres:15.4
     environment:
