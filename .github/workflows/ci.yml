@@ -1,0 +1,13 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker Compose
+        run: docker compose up --build -d
+      - name: Run tests
+        run: docker compose exec opsdesk pytest
+      - name: Stop services
+        run: docker compose down
