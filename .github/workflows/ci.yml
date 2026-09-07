@@ -8,6 +8,6 @@ jobs:
       - name: Set up Docker Compose
         run: docker compose up --build -d
       - name: Run tests
-        run: docker compose exec opsdesk pytest
+        run: docker compose exec -e PYTHONPATH=/OpsDesk opsdesk pytest
       - name: Stop services
         run: docker compose down
