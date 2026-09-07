@@ -17,3 +17,4 @@ jobs:
               run: docker compose exec -e PYTHONPATH=/OpsDesk opsdesk pytest
             - name: Stop services
               run: docker compose down
+            

@@ -21,3 +21,15 @@ htmlcov/
 
 # Logs locaux
 *.log
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+
+# Terraform variables
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
