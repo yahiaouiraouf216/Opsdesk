@@ -55,6 +55,7 @@ resource "aws_security_group" "opsdesk_sg" {
 }
 resource "aws_instance" "opsdesk_instance" {
   ami                    = data.aws_ami.ubuntu.id
+  key_name               = "opsdesk-key"
   instance_type          = var.instance_type
   subnet_id              = aws_subnet.opsdesk_subnet.id
   vpc_security_group_ids = [aws_security_group.opsdesk_sg.id]
